@@ -21,6 +21,8 @@ var allowCrossDomain = function(req, res, next) {
 };
 
 app.use(logger(process.env.node_env  === 'development' ? 'dev' : 'combined'));
+app.use(require('helmet')())
+app.use(require('compression')())
 app.use(allowCrossDomain);
 
 //app.use('/', require('./routes/far'));

@@ -2,9 +2,9 @@ var express = require('express');
 var pg = require('pg');
 var tar = require('tar');
 var streamBuffers = require('stream-buffers');
+const etag = require('etag')
 
 var router = express.Router();
-
 var client = new pg.Client();
 
 if (!String.format) {
@@ -535,7 +535,7 @@ router.get('/model/:id/tgz', function(req, res, next) {
   });
 });
 
-router.get('/model/:id/thumb', function(req, res, next) {
+function getThumb (req, res, next) {
   var id = Number(req.params.id || 0);
   if( isNaN(id) ) {
       return res.status(500).send("Invalid Request");
@@ -543,7 +543,7 @@ router.get('/model/:id/thumb', function(req, res, next) {
   
   Query({
       name: 'ModelsThumb',
-      text: "select mo_thumbfile from fgs_models where mo_id = $1",
+      text: "select mo_thumbfile,mo_modified from fgs_models where mo_id = $1",
       values: [ id ]
     }, function(err, result) {
 
@@ -559,10 +559,17 @@ router.get('/model/:id/thumb', function(req, res, next) {
       return res.status(404).send("no thumbfile");
 
     var buf = new Buffer(result.rows[0].mo_thumbfile, 'base64');
-    res.writeHead(200, {'Content-Type': 'image/jpeg'});
+    res.writeHead(200, {
+      'Content-Type': 'image/jpeg',
+      'Last-Modified': result.rows[0].mo_modified ,
+//      'ETag': etag(buf),
+    });
     res.end(buf);
   });
-});
+}
+
+router.get('/model/:id/thumb', getThumb );
+router.get('/model/:id/thumb.jpg', getThumb );
 
 var util = require('util');
 var stream = require('stream');
