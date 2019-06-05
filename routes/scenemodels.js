@@ -256,7 +256,7 @@ router.get('/stats/', function(req, res, next) {
 
   Query({
       name: 'Statistics ',
-      text: "with t1 as (select count(*) objects from fgs_objects), t2 as (select count(*) models from fgs_models), t3 as (select count(*) authors from fgs_authors), t4 as (select count(*) navaids from fgs_navaids), t5 as (select count(*) pends from fgs_position_requests) select objects, models, authors, navaids, pends from t1, t2, t3, t4, t5",
+      text: "with t1 as (select count(*) objects from fgs_objects), t2 as (select count(*) models from fgs_models), t3 as (select count(*) authors from fgs_authors), t4 as (select count(*) navaids from fgs_navaids), t5 as (select count(*) pends from fgs_position_requests), t6 as (select count(*) gndelevs from fgs_objects where ob_gndelev=-9999) select objects, models, authors, navaids, pends, gndelevs from t1, t2, t3, t4, t5, t6",
       values: []
     }, function(err, result) {
  
@@ -273,6 +273,7 @@ router.get('/stats/', function(req, res, next) {
         'authors': row.authors || 0,
         'navaids': row.navaids || 0,
         'pending': row.pends || 0,
+        'elev': row.gndelevs || 0,
       }
     });
   });
