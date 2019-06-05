@@ -1,6 +1,5 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 
@@ -13,7 +12,7 @@ var allowCrossDomain = function(req, res, next) {
 
     // intercept OPTIONS method
     if ('OPTIONS' == req.method) {
-      res.send(200);
+      res.sendStatus(200);
     }
     else {
       next();
@@ -24,6 +23,10 @@ app.use(logger(process.env.node_env  === 'development' ? 'dev' : 'combined'));
 app.use(require('helmet')())
 app.use(require('compression')())
 app.use(allowCrossDomain);
+app.use(bodyParser.json({
+  strict : true,
+  limit:'5mb',
+}))
 
 //app.use('/', require('./routes/far'));
 //app.use('/ts', require('./routes/ts'));

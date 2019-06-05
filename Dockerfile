@@ -1,6 +1,6 @@
 FROM node:8-alpine
 LABEL maintainer="Torsten Dreyer <torsten@t3r.de>"
-LABEL version="1.0.0"
+LABEL version="1.1.0"
 LABEL description="FlightGear scenemodels API"
 
 RUN apk add --no-cache curl
@@ -14,7 +14,7 @@ ENV PGUSER webuser
 ENV PGPASSWORD secret
 
 WORKDIR /usr/local/app
-COPY package.json /usr/local/app
+COPY package.json package-lock.json /usr/local/app/
 RUN npm install --only=production
 COPY . /usr/local/app/
 
