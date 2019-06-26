@@ -1,3 +1,6 @@
+'use strict'
+require('dotenv').config()
+
 /**
  * Module dependencies.
  */
