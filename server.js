@@ -1,6 +1,10 @@
+'use strict'
+
 /**
  * Module dependencies.
  */
+
+require('dotenv').config()
 
 var app = require('./app');
 var debug = require('debug')('fgscenery:server');
