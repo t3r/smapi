@@ -1,11 +1,18 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
+'use strict'
 
-var app = express();
+process.env.node_env = process.env.node_env || 'development'
 
-var allowCrossDomain = function(req, res, next) {
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+
+const app = express();
+
+const passport = require('passport');
+require('./config/passport')(passport); // pass passport for configuration
+
+const allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
@@ -27,10 +34,16 @@ app.use(bodyParser.json({
   strict : true,
   limit:'5mb',
 }))
+app.use(passport.initialize())
+
+//for local debugging only
+app.use(express.static('../smweb2/html'));
+
 
 //app.use('/', require('./routes/far'));
 //app.use('/ts', require('./routes/ts'));
 app.use('/scenemodels', require('./routes/scenemodels'));
+app.use('/auth', require('./routes/auth')(passport));
 
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, shutting down');
