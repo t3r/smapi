@@ -37,7 +37,8 @@ app.use(bodyParser.json({
 app.use(passport.initialize())
 
 //for local debugging only
-app.use(express.static('../smweb2/html'));
+if( process.env.node_env === 'development' )
+  app.use(express.static('../smweb2/html'));
 
 
 //app.use('/', require('./routes/far'));
