@@ -1,6 +1,5 @@
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
-const TwitterStrategy = require('passport-twitter').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 
@@ -177,42 +176,6 @@ module.exports = function(passport) {
     .catch( err => {
         console.error(err)
         return done(null, null)
-    })
-  }));
-
-  passport.use(new TwitterStrategy({
-
-    consumerKey : StrategyConf.twitter.consumerKey,
-    consumerSecret : StrategyConf.twitter.consumerSecret,
-    callbackURL : getCallbackUrl(StrategyConf.twitter.callbackURL),
-    passReqToCallback : true
-
-  }, function(req, token, tokenSecret, profile, done) {
-    console.log("twitter callback with user", req.user, "profile", profile)
-    var filter = req.user ? {
-      _id : req.user._id
-    } : {
-      'twitter.id' : profile.id
-    }
-
-    User.findOne(filter, function(err, user) {
-      if (err)
-        return done(err);
-
-      console.log("found user", user)
-      if (!user)
-        return done(null, null)
-
-      user.twitter.id = profile.id
-      user.twitter.token = profile.token
-      user.twitter.name = profile.displayName
-      user.name = user.name || user.twitter.name
-      user.twitter.imgUrl = profile.photos[0].value
-      user.save(function(err) {
-        if (err)
-          throw err;
-        return done(null, user)
-      })
     })
   }));
 
